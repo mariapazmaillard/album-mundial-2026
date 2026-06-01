@@ -161,17 +161,7 @@ if('serviceWorker' in navigator) {
 </script>
 </head>
 <body>
-<div class="access-screen" id="accessScreen">
-  <div class="access-box">
-    <div class="access-logo">⚽</div>
-    <div class="access-title">Álbum Mundial 2026</div>
-    <div class="access-sub">Ingresa tu código de acceso para continuar</div>
-    <input class="access-input" id="accessInput" type="text" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off">
-    <button class="access-btn" onclick="checkAccess()">Ingresar</button>
-    <div class="access-err" id="accessErr"></div>
-  </div>
-</div>
-<div class="app" id="mainApp" style="display:none">
+<div class="app">
   <div class="header">
     <div style="display:flex;justify-content:space-between;align-items:center"><h1>⚽ Álbum Mundial 2026</h1><button onclick="toggleLang()" id="lang-btn" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;padding:4px 10px;font-size:12px;font-weight:700" title="Change language">ES</button><button onclick="toggleTheme()" id="theme-btn" style="background:none;border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;padding:4px 10px;font-size:16px" title="Cambiar tema">🌙</button></div>
     <p id="hdr-sub" data-es="48 selecciones · 980 figuritas" data-en="48 teams · 980 stickers">48 selecciones · 980 figuritas</p>
@@ -921,38 +911,6 @@ function celebrate(sec) {
   setTimeout(function(){ el.remove(); }, 3000);
 }
 
-var VALID_CODES = ['ALBA-2026','FWCA-2026','MUND-2026','FIGU-2026','GOOO-2026'];
-function checkAccess() {
-  var input = document.getElementById('accessInput').value.trim().toUpperCase();
-  var err = document.getElementById('accessErr');
-  if(VALID_CODES.indexOf(input) >= 0) {
-    try { localStorage.setItem('album2026access', input); } catch(e) {}
-    document.getElementById('accessScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = '';
-    applyLang(); renderAll(); loadFromCloud();
-  } else {
-    err.textContent = '❌ Código incorrecto, verifica e intenta de nuevo';
-    document.getElementById('accessInput').style.borderColor = '#ef4444';
-    setTimeout(function(){ document.getElementById('accessInput').style.borderColor = '#334155'; }, 2000);
-  }
-}
-document.addEventListener('DOMContentLoaded', function() {
-  var saved = null;
-  try { saved = localStorage.getItem('album2026access'); } catch(e) {}
-  if(saved && VALID_CODES.indexOf(saved) >= 0) {
-    document.getElementById('accessScreen').style.display = 'none';
-    document.getElementById('mainApp').style.display = '';
-  }
-  var inp = document.getElementById('accessInput');
-  if(inp) {
-    inp.addEventListener('keyup', function(e) { if(e.key==='Enter') checkAccess(); });
-    inp.addEventListener('input', function() {
-      var v = this.value.replace(/[^A-Za-z0-9]/g,'').toUpperCase();
-      if(v.length > 4) v = v.slice(0,4) + '-' + v.slice(4,8);
-      this.value = v;
-    });
-  }
-});
 var currentLang = 'es';
 function toggleLang() {
   currentLang = currentLang === 'es' ? 'en' : 'es';
@@ -1158,7 +1116,9 @@ document.getElementById('install-btn') && document.getElementById('install-btn')
 window.addEventListener('appinstalled', function() {
   document.getElementById('install-banner').style.display = 'none';
 });
-// Init desde checkAccess
+applyLang();
+renderAll();
+loadFromCloud();
 </script>
 </body>
 </html>
